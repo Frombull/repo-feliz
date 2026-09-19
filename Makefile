@@ -5,23 +5,26 @@ PORT = 8000
 COMPOSE = docker compose
 
 .PHONY: help install run test lint format clean \
-	docker-build docker-up docker-down docker-logs docker-ps docker-restart docker-clean db-shell
+	up up-build down build logs logs-api logs-db ps shell db-shell
 
 help:
-	@echo "make install        - instala as dependencias"
-	@echo "make run            - roda o servidor"
-	@echo "make test           - roda os testes"
-	@echo "make lint           - checa o codigo com ruff"
-	@echo "make format         - formata com black"
-	@echo "make clean          - limpa os caches"
-	@echo "make docker-build   - builda as imagens do docker compose"
-	@echo "make docker-up      - sobe os containers (backend + banco) em background"
-	@echo "make docker-down    - derruba os containers"
-	@echo "make docker-logs    - mostra os logs dos containers em tempo real"
-	@echo "make docker-ps      - lista os containers do projeto"
-	@echo "make docker-restart - reinicia os containers"
-	@echo "make docker-clean   - derruba os containers e remove volumes (apaga dados do banco)"
-	@echo "make db-shell       - abre um psql dentro do container do banco"
+	@echo "make install   - instala as dependencias"
+	@echo "make run       - roda o servidor localmente"
+	@echo "make test      - roda os testes"
+	@echo "make lint      - checa o codigo com ruff"
+	@echo "make format    - formata com black"
+	@echo "make clean     - limpa os caches locais"
+	@echo "make up        - sobe os containers (api + banco) em background"
+	@echo "make up-build  - reconstroi as imagens e sobe os containers"
+	@echo "make down      - para e remove os containers"
+	@echo "make build     - constroi as imagens do docker compose"
+	@echo "make logs      - acompanha os logs de todos os servicos"
+	@echo "make logs-api  - acompanha apenas os logs da api"
+	@echo "make logs-db   - acompanha apenas os logs do banco"
+	@echo "make ps        - mostra o status dos servicos"
+	@echo "make shell     - abre um shell no container da api"
+	@echo "make db-shell  - abre um psql no container do banco"
+	@echo "make clean-docker - remove containers, rede e volumes do compose"
 
 install:
 	cd $(BACKEND) && $(POETRY) install
@@ -41,26 +44,35 @@ format:
 clean:
 	cd $(BACKEND) && rm -rf .pytest_cache .ruff_cache
 
-docker-build:
-	$(COMPOSE) build
-
-docker-up:
+up:
 	$(COMPOSE) up -d
 
-docker-down:
+up-build:
+	$(COMPOSE) up -d --build
+
+down:
 	$(COMPOSE) down
 
-docker-logs:
+build:
+	$(COMPOSE) build
+
+logs:
 	$(COMPOSE) logs -f
 
-docker-ps:
+logs-api:
+	$(COMPOSE) logs -f api
+
+logs-db:
+	$(COMPOSE) logs -f db
+
+ps:
 	$(COMPOSE) ps
 
-docker-restart:
-	$(COMPOSE) restart
-
-docker-clean:
-	$(COMPOSE) down -v
+shell:
+	$(COMPOSE) exec api sh
 
 db-shell:
-	$(COMPOSE) exec db psql -U postgres -d postgres
+	$(COMPOSE) exec db psql -U $${POSTGRES_USER:-app} -d $${POSTGRES_DB:-app}
+
+clean-docker:
+	$(COMPOSE) down -v

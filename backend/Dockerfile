@@ -1,18 +1,16 @@
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_NO_INTERACTION=1
-
 WORKDIR /app
 
-RUN pip install --no-cache-dir poetry
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root --only main
+COPY pyproject.toml poetry.lock poetry.toml ./
 
-COPY . .
+RUN pip install --no-cache-dir poetry \
+    && poetry install --only main --no-root --no-interaction --no-ansi
+
+COPY app ./app
 
 EXPOSE 8000
 
