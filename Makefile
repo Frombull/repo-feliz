@@ -4,13 +4,14 @@ HOST = 127.0.0.1
 PORT = 8000
 COMPOSE = docker compose
 
-.PHONY: help install run test lint format clean \
+.PHONY: help install run test test-v lint format clean \
 	up up-build down build logs logs-api logs-db ps shell db-shell
 
 help:
 	@echo "make install   - instala as dependencias"
 	@echo "make run       - roda o servidor localmente"
 	@echo "make test      - roda os testes"
+	@echo "make test-v    - roda os testes em modo verboso"
 	@echo "make lint      - checa o codigo com ruff"
 	@echo "make format    - formata com black"
 	@echo "make clean     - limpa os caches locais"
@@ -34,6 +35,9 @@ run:
 
 test:
 	cd $(BACKEND) && $(POETRY) run pytest
+
+test-v:
+	cd $(BACKEND) && $(POETRY) run pytest -v
 
 lint:
 	cd $(BACKEND) && $(POETRY) run ruff check app tests
