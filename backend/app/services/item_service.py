@@ -43,7 +43,7 @@ class ItemService:
 
 item_service = ItemService()
 item_service.create(ItemCreate(name="café", price=5.0))
-item_service.create(ItemCreate(name="chá", price=4.0))
+item_service.create(ItemCreate(name="chá", price=4.0, available=False))
 item_service.create(ItemCreate(name="suco", price=7.5))
 
 
