@@ -5,6 +5,7 @@ PORT = 8000
 COMPOSE = docker compose
 
 .PHONY: help install run test test-v test-unit test-integration lint format clean \
+	migrate migration downgrade \
 	up up-build down build logs logs-api logs-db ps shell db-shell
 
 help:
@@ -17,6 +18,9 @@ help:
 	@echo "make lint      - checa o codigo com ruff"
 	@echo "make format    - formata com black"
 	@echo "make clean     - limpa os caches locais"
+	@echo "make migrate   - aplica as migrations (alembic upgrade head)"
+	@echo "make migration m=\"mensagem\" - gera uma nova migration"
+	@echo "make downgrade - desfaz a ultima migration"
 	@echo "make up        - sobe os containers (api + banco) em background"
 	@echo "make up-build  - reconstroi as imagens e sobe os containers"
 	@echo "make down      - para e remove os containers"
@@ -48,10 +52,19 @@ test-integration:
 	cd $(BACKEND) && $(POETRY) run pytest tests/integration -v
 
 lint:
-	cd $(BACKEND) && $(POETRY) run ruff check app tests
+	cd $(BACKEND) && $(POETRY) run ruff check app tests migrations
 
 format:
-	cd $(BACKEND) && $(POETRY) run black app tests
+	cd $(BACKEND) && $(POETRY) run black app tests migrations
+
+migrate:
+	cd $(BACKEND) && $(POETRY) run alembic upgrade head
+
+migration:
+	cd $(BACKEND) && $(POETRY) run alembic revision --autogenerate -m "$(m)"
+
+downgrade:
+	cd $(BACKEND) && $(POETRY) run alembic downgrade -1
 
 clean:
 	cd $(BACKEND) && rm -rf .pytest_cache .ruff_cache
