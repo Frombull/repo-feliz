@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NAME_MAX_LENGTH, validateItem, validateName, validatePrice } from "../../src/validate";
+import { NAME_MAX_LENGTH, validateItem, validateName, validatePrice } from "../../src/validation";
 
 describe("validateName", () => {
   it.each(["", "   "])("exige o nome (%j)", (name) => {

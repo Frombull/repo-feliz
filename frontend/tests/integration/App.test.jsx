@@ -1,21 +1,17 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { ItemsPage } from "../../src/pages/ItemsPage";
+import { App } from "../../src/App";
 
-const initialItems = [
-  { id: 1, name: "Teclado", price: 150, available: true },
-  { id: 2, name: "Monitor", price: 899.9, available: false },
-];
-
+// o App começa com Teclado (disponível) e Monitor (indisponível)
 function getRow(name) {
   return screen.getByText(name).closest("li");
 }
 
-describe("ItemsPage", () => {
+describe("App", () => {
   it("adiciona pelo formulário e o item aparece na lista", async () => {
     const user = userEvent.setup();
-    render(<ItemsPage initialItems={initialItems} />);
+    render(<App />);
 
     await user.type(screen.getByLabelText("Nome"), "Mouse");
     await user.type(screen.getByLabelText("Preço"), "50");
@@ -28,7 +24,7 @@ describe("ItemsPage", () => {
 
   it("não adiciona item inválido", async () => {
     const user = userEvent.setup();
-    render(<ItemsPage initialItems={initialItems} />);
+    render(<App />);
 
     await user.type(screen.getByLabelText("Nome"), "Mouse");
     await user.type(screen.getByLabelText("Preço"), "0");
@@ -40,7 +36,7 @@ describe("ItemsPage", () => {
 
   it("filtra pela disponibilidade", async () => {
     const user = userEvent.setup();
-    render(<ItemsPage initialItems={initialItems} />);
+    render(<App />);
 
     await user.selectOptions(screen.getByLabelText("Mostrar"), "available");
     expect(screen.getByText("Teclado")).toBeInTheDocument();
@@ -53,7 +49,7 @@ describe("ItemsPage", () => {
 
   it("alterar a disponibilidade move o item de filtro", async () => {
     const user = userEvent.setup();
-    render(<ItemsPage initialItems={initialItems} />);
+    render(<App />);
 
     await user.selectOptions(screen.getByLabelText("Mostrar"), "available");
     await user.click(
@@ -65,7 +61,7 @@ describe("ItemsPage", () => {
 
   it("remove o item da lista", async () => {
     const user = userEvent.setup();
-    render(<ItemsPage initialItems={initialItems} />);
+    render(<App />);
 
     await user.click(within(getRow("Monitor")).getByRole("button", { name: "Remover" }));
 

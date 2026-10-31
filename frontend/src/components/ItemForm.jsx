@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { validateItem } from "../validate";
+import { validateItem } from "../validation";
 
 const emptyForm = { name: "", price: "", available: true };
 

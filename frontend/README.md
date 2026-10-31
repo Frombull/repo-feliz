@@ -28,15 +28,14 @@ A aplicação fica disponível em `http://localhost:5173`. Para gerar o build: `
 ```
 src/
   main.jsx         # monta o React na página
-  App.jsx          # componente raiz
+  App.jsx          # guarda o estado dos itens e junta os componentes
   index.css        # só importa o Tailwind
-  validate.js      # regras de validação do item (funções puras)
+  validation.js    # regras de validação do item (funções puras)
   components/      # ItemForm, ItemList e ItemFilter
-  pages/           # ItemsPage, junta os componentes e guarda o estado
 tests/
   setup.js         # jest-dom e limpeza do DOM entre os testes
-  unit/            # validate.js e componentes isolados (*.test.js/jsx)
-  integration/     # página inteira com formulário, filtro e lista
+  unit/            # validation.js e componentes isolados (*.test.js/jsx)
+  integration/     # App inteiro com formulário, filtro e lista
   e2e/             # Playwright no navegador (*.spec.js)
 ```
 
