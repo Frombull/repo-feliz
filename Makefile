@@ -1,5 +1,7 @@
 BACKEND = backend
+FRONTEND = frontend
 POETRY = py -m poetry
+NPM = npm
 HOST = 127.0.0.1
 PORT = 8000
 COMPOSE = docker compose
@@ -28,6 +30,18 @@ help:
 	@echo "make shell     - abre um shell no container da api"
 	@echo "make db-shell  - abre um psql no container do banco"
 	@echo "make clean-docker - remove containers, rede e volumes do compose"
+	@echo "make front-install  - instala as dependencias do frontend"
+	@echo "make front-browsers - instala o chromium usado pelo playwright"
+	@echo "make front-dev      - roda o frontend com o vite"
+	@echo "make front-build    - gera o build de producao do frontend"
+	@echo "make front-test     - roda os testes unitarios e de integracao (vitest)"
+	@echo "make front-test-unit - roda apenas os testes unitarios do frontend"
+	@echo "make front-test-integration - roda apenas os testes de integracao do frontend"
+	@echo "make front-test-e2e - roda os testes e2e (playwright)"
+	@echo "make front-lint     - checa o codigo com o linter do biome"
+	@echo "make front-format   - formata com o biome"
+	@echo "make front-check    - checa lint, formatacao e imports com o biome"
+	@echo "make front-clean    - limpa o build e os relatorios de teste"
 
 install:
 	cd $(BACKEND) && $(POETRY) install
@@ -88,3 +102,42 @@ db-shell:
 
 clean-docker:
 	$(COMPOSE) down -v
+
+.PHONY: front-install front-browsers front-dev front-build front-test front-test-unit \
+	front-test-integration front-test-e2e front-lint front-format front-check front-clean
+
+front-install:
+	cd $(FRONTEND) && $(NPM) install
+
+front-browsers:
+	cd $(FRONTEND) && npx playwright install chromium
+
+front-dev:
+	cd $(FRONTEND) && $(NPM) run dev
+
+front-build:
+	cd $(FRONTEND) && $(NPM) run build
+
+front-test:
+	cd $(FRONTEND) && $(NPM) test
+
+front-test-unit:
+	cd $(FRONTEND) && $(NPM) run test:unit
+
+front-test-integration:
+	cd $(FRONTEND) && $(NPM) run test:integration
+
+front-test-e2e:
+	cd $(FRONTEND) && $(NPM) run test:e2e
+
+front-lint:
+	cd $(FRONTEND) && $(NPM) run lint
+
+front-format:
+	cd $(FRONTEND) && $(NPM) run format
+
+front-check:
+	cd $(FRONTEND) && $(NPM) run check
+
+front-clean:
+	cd $(FRONTEND) && rm -rf dist playwright-report test-results
