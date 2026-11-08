@@ -1,12 +1,44 @@
 import pytest
 
+from app.models.item import ItemModel
 from app.schemas.item import ItemCreate, ItemUpdate
 from app.services.item_service import ItemService
 
 
+class FakeItemRepository:
+    """Repository em memoria, para testar o service sem banco."""
+
+    def __init__(self):
+        self._items: dict[int, ItemModel] = {}
+        self._next_id = 1
+
+    def list(self, available=None):
+        items = list(self._items.values())
+        if available is not None:
+            items = [i for i in items if i.available == available]
+        return items
+
+    def get(self, item_id):
+        return self._items.get(item_id)
+
+    def add(self, **fields):
+        item = ItemModel(id=self._next_id, **fields)
+        self._items[item.id] = item
+        self._next_id += 1
+        return item
+
+    def update(self, item, **fields):
+        for key, value in fields.items():
+            setattr(item, key, value)
+        return item
+
+    def delete(self, item):
+        del self._items[item.id]
+
+
 @pytest.fixture
 def service():
-    service = ItemService()
+    service = ItemService(FakeItemRepository())
     service.create(ItemCreate(name="café", price=5.0))
     service.create(ItemCreate(name="chá", price=4.0, available=False))
     return service

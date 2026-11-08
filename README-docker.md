@@ -49,6 +49,10 @@ alcance (`localhost`, e não `api`). Ela é embutida no build do frontend: ao mu
 `make up-build` de novo. Se mudar a `FRONTEND_PORT`, ajuste também a `CORS_ORIGINS`, que precisa
 ter a origem exata do frontend.
 
+Ao iniciar, a API aplica as migrations (`alembic upgrade head`). O PostgreSQL também
+fica exposto em `localhost:5432` (porta configurável por `POSTGRES_PORT`), para rodar
+`make migrate` e `make run` fora do Docker. Os dados ficam no volume `postgres_data`.
+
 ## Verificar os serviços
 
 ```bash
@@ -113,7 +117,9 @@ make clean-docker
 repo-feliz/
 ├── backend/
 │   ├── app/
+│   ├── migrations/
 │   ├── tests/
+│   ├── alembic.ini
 │   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── poetry.lock
