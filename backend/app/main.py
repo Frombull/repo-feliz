@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import health, items
+from app.api.routes import health
 from app.config import get_cors_origins
 
 app = FastAPI(title="C216 API")
@@ -14,4 +14,3 @@ app.add_middleware(
 )
 
 app.include_router(health.router)
-app.include_router(items.router)

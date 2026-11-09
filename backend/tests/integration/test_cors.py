@@ -6,7 +6,7 @@ OTHER = "http://evil.example.com"
 
 def preflight(client, origin, method):
     return client.options(
-        "/items",
+        "/health",
         headers={
             "Origin": origin,
             "Access-Control-Request-Method": method,
@@ -30,11 +30,11 @@ def test_preflight_rejects_other_origin(client):
 
 
 def test_response_has_cors_header_for_frontend_origin(client):
-    response = client.get("/items", headers={"Origin": ALLOWED})
+    response = client.get("/health", headers={"Origin": ALLOWED})
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == ALLOWED
 
 
 def test_response_has_no_cors_header_for_other_origin(client):
-    response = client.get("/items", headers={"Origin": OTHER})
+    response = client.get("/health", headers={"Origin": OTHER})
     assert "access-control-allow-origin" not in response.headers

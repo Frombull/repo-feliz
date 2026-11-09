@@ -1,3 +1,1 @@
-from app.models.item import ItemModel
-
-__all__ = ["ItemModel"]
+__all__: list[str] = []

@@ -10,7 +10,6 @@ import app.models
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-from app.repositories.item_repository import ItemRepository
 
 # Em CI e no docker compose aponta para o PostgreSQL; sem a variavel usa SQLite em memoria.
 TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "sqlite+pysqlite://")
@@ -39,11 +38,6 @@ def session_factory(engine):
 
 @pytest.fixture
 def client(session_factory):
-    with session_factory() as session:
-        repository = ItemRepository(session)
-        repository.add(name="café", price=5.0, available=True)
-        repository.add(name="chá", price=4.0, available=False)
-
     def override_get_db():
         with session_factory() as session:
             yield session
