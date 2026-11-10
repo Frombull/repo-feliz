@@ -36,3 +36,7 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.ruff.lint]
+# a API trabalha com horarios locais, sem fuso (datetime "naive"), de forma consciente
+ignore = ["DTZ"]

@@ -37,6 +37,12 @@ def session_factory(engine):
 
 
 @pytest.fixture
+def session(session_factory):
+    with session_factory() as session:
+        yield session
+
+
+@pytest.fixture
 def client(session_factory):
     def override_get_db():
         with session_factory() as session:
