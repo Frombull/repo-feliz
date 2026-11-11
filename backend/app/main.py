@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.errors import register_error_handlers
-from app.api.routes import health, rooms
+from app.api.routes import bookings, health, rooms
 from app.config import get_cors_origins
 
 app = FastAPI(title="Reserva de Salas")
@@ -18,3 +18,4 @@ register_error_handlers(app)
 
 app.include_router(health.router)
 app.include_router(rooms.router)
+app.include_router(bookings.router)
