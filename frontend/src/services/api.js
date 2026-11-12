@@ -46,3 +46,15 @@ export async function request(path, { method = "GET", body } = {}) {
   }
   return response.json();
 }
+
+// monta "?a=1&b=2" ignorando o que não foi preenchido
+export function queryString(params) {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== "") {
+      search.set(key, String(value));
+    }
+  }
+  const text = search.toString();
+  return text ? `?${text}` : "";
+}
