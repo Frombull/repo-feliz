@@ -55,7 +55,7 @@ describe("validateBooking", () => {
       endAt: "",
     });
     expect(errors).toEqual({
-      roomId: "Escolha a sala",
+      roomId: "Selecione uma sala",
       title: "Informe o título",
       requester: "Informe o responsável",
       attendees: "Informe os participantes",

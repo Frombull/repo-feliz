@@ -66,7 +66,7 @@ function validatePeriod({ startAt, endAt }) {
 
 export function validateBooking({ roomId, title, requester, attendees, startAt, endAt }) {
   return collect([
-    ["roomId", roomId ? null : "Escolha a sala"],
+    ["roomId", roomId ? null : "Selecione uma sala"],
     ["title", requiredText(title, { required: "Informe o título", max: TITLE_MAX })],
     [
       "requester",
