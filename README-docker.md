@@ -49,6 +49,8 @@ alcance (`localhost`, e não `api`). Ela é embutida no build do frontend: ao mu
 `make up-build` de novo. Se mudar a `FRONTEND_PORT`, ajuste também a `CORS_ORIGINS`, que precisa
 ter a origem exata do frontend.
 
+Para subir só o banco (por exemplo para rodar a API fora do Docker ou os testes e2e), use `make db-up`.
+
 Ao iniciar, a API aplica as migrations (`alembic upgrade head`). O PostgreSQL também
 fica exposto em `localhost:5432` (porta configurável por `POSTGRES_PORT`), para rodar
 `make migrate` e `make run` fora do Docker. Os dados ficam no volume `postgres_data`.
