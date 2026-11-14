@@ -5,6 +5,15 @@
 - Docker com Docker Compose
 - Make (opcional; os comandos `docker compose` também podem ser usados diretamente)
 
+## Serviços
+
+- `frontend`: React servido pelo nginx, em `http://localhost:5173`
+- `api`: FastAPI, em `http://localhost:8000` (Swagger em `http://localhost:8000/docs`)
+- `db`: PostgreSQL
+
+O `frontend` só sobe depois que a `api` responde em `/health`, e a `api` só sobe depois que o
+`db` está saudável.
+
 ## Configuração
 
 Copie `.env.example` para `.env` e ajuste os valores se necessário.
@@ -33,11 +42,12 @@ Ou:
 docker compose up -d --build
 ```
 
-A API ficará disponível em:
+O frontend ficará disponível em `http://localhost:5173` e a API em `http://localhost:8000`.
 
-```text
-http://localhost:8000
-```
+Quem chama a API é o navegador, então a `VITE_API_URL` precisa ser um endereço que o navegador
+alcance (`localhost`, e não `api`). Ela é embutida no build do frontend: ao mudar, rode
+`make up-build` de novo. Se mudar a `FRONTEND_PORT`, ajuste também a `CORS_ORIGINS`, que precisa
+ter a origem exata do frontend.
 
 ## Verificar os serviços
 
@@ -61,6 +71,12 @@ Somente do banco:
 
 ```bash
 make logs-db
+```
+
+Somente do frontend:
+
+```bash
+make logs-frontend
 ```
 
 ## Acessar os containers
@@ -102,9 +118,15 @@ repo-feliz/
 │   ├── Dockerfile
 │   ├── poetry.lock
 │   └── pyproject.toml
+├── frontend/
+│   ├── src/
+│   ├── tests/
+│   ├── .dockerignore
+│   ├── Dockerfile
+│   └── package.json
 ├── .env.example
 ├── compose.yml
 └── Makefile
 ```
 
-O backend (serviço `api`) utiliza `./backend` como contexto de build. Dentro da rede criada pelo Compose, o PostgreSQL (serviço `db`) é acessível pelo hostname `db`.
+O backend (serviço `api`) utiliza `./backend` como contexto de build e o frontend (serviço `frontend`) utiliza `./frontend`. Dentro da rede criada pelo Compose, o PostgreSQL (serviço `db`) é acessível pelo hostname `db`.

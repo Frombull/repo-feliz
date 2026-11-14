@@ -42,6 +42,8 @@ help:
 	@echo "make front-format   - formata com o biome"
 	@echo "make front-check    - checa lint, formatacao e imports com o biome"
 	@echo "make front-clean    - limpa o build e os relatorios de teste"
+	@echo "make logs-frontend  - acompanha apenas os logs do frontend"
+	@echo "make test-all       - roda todos os testes: backend, frontend e e2e"
 
 install:
 	cd $(BACKEND) && $(POETRY) install
@@ -141,3 +143,14 @@ front-check:
 
 front-clean:
 	cd $(FRONTEND) && rm -rf dist playwright-report test-results
+
+.PHONY: logs-frontend test-all
+
+# comando que o playwright usa para subir a API no e2e, com o mesmo poetry do resto do Makefile
+export E2E_API_COMMAND = $(POETRY) run uvicorn app.main:app --host $(HOST) --port $(PORT)
+
+logs-frontend:
+	$(COMPOSE) logs -f frontend
+
+# backend (unitarios e integracao), frontend (vitest) e e2e (playwright com a API de verdade)
+test-all: test front-test front-test-e2e
