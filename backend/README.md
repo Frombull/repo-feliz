@@ -26,7 +26,8 @@ A API fica disponível em `http://127.0.0.1:8000`.
 
 ```
 app/
-  main.py          # só cria o app e registra os routers
+  main.py          # cria o app, configura o CORS e registra os routers
+  config.py        # lê as origens do CORS da variável de ambiente
   api/routes/      # endpoints (health e items)
   schemas/         # modelos Pydantic
   services/        # regra de negócio e armazenamento em memória
@@ -44,6 +45,17 @@ POST   /items
 PUT    /items/{item_id}
 PATCH  /items/{item_id}
 DELETE /items/{item_id}
+```
+
+## CORS
+
+O navegador só deixa o frontend ler a resposta da API se a origem dele estiver autorizada. As
+origens vêm da variável `CORS_ORIGINS`, separadas por vírgula (padrão `http://localhost:5173`).
+Os métodos liberados são `GET`, `POST`, `PUT`, `PATCH` e `DELETE`, e o único header é
+`Content-Type`. Usar `*` não é aceito: a API não sobe com ele.
+
+```bash
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000 make run
 ```
 
 ## Testes
