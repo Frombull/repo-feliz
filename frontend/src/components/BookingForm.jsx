@@ -76,6 +76,7 @@ export function BookingForm({ rooms, booking, draft, onSubmit, onCancel }) {
         <Field label="Sala" error={errors.roomId}>
           <select
             name="roomId"
+            aria-label="Sala"
             value={values.roomId}
             onChange={handleChange}
             aria-invalid={Boolean(errors.roomId)}

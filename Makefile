@@ -23,7 +23,7 @@ help:
 	@echo "make migrate   - aplica as migrations (alembic upgrade head)"
 	@echo "make migration m=\"mensagem\" - gera uma nova migration"
 	@echo "make downgrade - desfaz a ultima migration"
-	@echo "make up        - sobe os containers (api + banco) em background"
+	@echo "make up        - sobe os containers (frontend + api + banco) em background"
 	@echo "make up-build  - reconstroi as imagens e sobe os containers"
 	@echo "make down      - para e remove os containers"
 	@echo "make build     - constroi as imagens do docker compose"
@@ -47,7 +47,8 @@ help:
 	@echo "make front-check    - checa lint, formatacao e imports com o biome"
 	@echo "make front-clean    - limpa o build e os relatorios de teste"
 	@echo "make logs-frontend  - acompanha apenas os logs do frontend"
-	@echo "make test-all       - roda todos os testes: backend, frontend e e2e"
+	@echo "make db-up          - sobe so o banco e espera ficar saudavel"
+	@echo "make test-all       - sobe o banco e roda todos os testes: backend, frontend e e2e"
 
 install:
 	cd $(BACKEND) && $(POETRY) install
@@ -157,13 +158,17 @@ front-check:
 front-clean:
 	cd $(FRONTEND) && rm -rf dist playwright-report test-results
 
-.PHONY: logs-frontend test-all
+.PHONY: logs-frontend test-all db-up
 
 # comando que o playwright usa para subir a API no e2e, com o mesmo poetry do resto do Makefile
-export E2E_API_COMMAND = $(POETRY) run uvicorn app.main:app --host $(HOST) --port $(PORT)
+export E2E_API_COMMAND = $(POETRY) run alembic upgrade head && $(POETRY) run uvicorn app.main:app --host $(HOST) --port $(PORT)
 
 logs-frontend:
 	$(COMPOSE) logs -f frontend
 
-# backend (unitarios e integracao), frontend (vitest) e e2e (playwright com a API de verdade)
-test-all: test front-test front-test-e2e
+# o e2e usa o PostgreSQL de verdade
+db-up:
+	$(COMPOSE) up -d --wait db
+
+# backend (unitarios e integracao), frontend (vitest) e e2e (playwright com a API e o banco de verdade)
+test-all: db-up test front-test front-test-e2e

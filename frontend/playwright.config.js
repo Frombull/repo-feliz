@@ -4,9 +4,11 @@ const FRONTEND_PORT = 5173;
 const API_PORT = 8000;
 
 // O Makefile passa o comando com o Poetry da máquina (make front-test-e2e).
-// Sem ele, usa o `poetry` do PATH.
+// Sem ele, usa o `poetry` do PATH. Aplica as migrations antes de subir a API, então o
+// PostgreSQL (DATABASE_URL) precisa estar no ar: `make db-up` ou o service do CI.
 const apiCommand =
-  process.env.E2E_API_COMMAND ?? `poetry run uvicorn app.main:app --port ${API_PORT}`;
+  process.env.E2E_API_COMMAND ??
+  `poetry run alembic upgrade head && poetry run uvicorn app.main:app --port ${API_PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -19,7 +21,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  // e2e de verdade: o frontend fala com o FastAPI, sem mock
+  // e2e de verdade: o frontend fala com o FastAPI e o PostgreSQL, sem mock
   webServer: [
     {
       command: apiCommand,
