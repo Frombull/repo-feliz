@@ -129,9 +129,8 @@ front-test-unit:
 front-test-integration:
 	cd $(FRONTEND) && $(NPM) run test:integration
 
-# o playwright sobe a API sozinho, usando o mesmo poetry do resto do Makefile
 front-test-e2e:
-	cd $(FRONTEND) && E2E_API_COMMAND="$(POETRY) run uvicorn app.main:app --host $(HOST) --port $(PORT)" $(NPM) run test:e2e
+	cd $(FRONTEND) && $(NPM) run test:e2e
 
 front-lint:
 	cd $(FRONTEND) && $(NPM) run lint
@@ -146,6 +145,9 @@ front-clean:
 	cd $(FRONTEND) && rm -rf dist playwright-report test-results
 
 .PHONY: logs-frontend test-all
+
+# comando que o playwright usa para subir a API no e2e, com o mesmo poetry do resto do Makefile
+export E2E_API_COMMAND = $(POETRY) run uvicorn app.main:app --host $(HOST) --port $(PORT)
 
 logs-frontend:
 	$(COMPOSE) logs -f frontend
